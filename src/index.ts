@@ -7,6 +7,7 @@ export {
 } from './relativeJsonPointer';
 export {
   JsonDocumentOutOfBounds,
+  IndexManipulationOnJsonDocumentRoot,
   IndexManipulationNotOnArrayValue,
   IndexManipulationOutOfBounds,
   ExtractNameOfJsonDocumentRoot,

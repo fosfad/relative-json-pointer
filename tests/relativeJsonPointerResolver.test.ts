@@ -1,6 +1,6 @@
 import type { Json } from '@fosfad/json-pointer';
 import { parseJsonPointerFromString } from '@fosfad/json-pointer';
-import { getValueAtRelativeJsonPointer } from '../src';
+import { getValueAtRelativeJsonPointer, IndexManipulationOnJsonDocumentRoot } from '../src';
 import {
   ExtractNameOfJsonDocumentRoot,
   IndexManipulationNotOnArrayValue,
@@ -56,6 +56,9 @@ describe('Negative custom test cases', () => {
   const deepJsonPointer = parseJsonPointerFromString('/foo/0/bar');
   test('JsonDocumentOutOfBounds', () => {
     expect(() => getValueAtRelativeJsonPointer(json, deepJsonPointer, '4')).toThrow(JsonDocumentOutOfBounds);
+  });
+  test('IndexManipulationOnJsonDocumentRoot', () => {
+    expect(() => getValueAtRelativeJsonPointer(json, deepJsonPointer, '3-1')).toThrow(IndexManipulationOnJsonDocumentRoot);
   });
   test('IndexManipulationNotOnArrayValue', () => {
     expect(() => getValueAtRelativeJsonPointer(json, deepJsonPointer, '0-1')).toThrow(IndexManipulationNotOnArrayValue);

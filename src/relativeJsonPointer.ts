@@ -31,7 +31,7 @@ export class UriFragmentIdentifierRepresentationNotSupported extends Error {
  * @see {@link https://json-schema.org/draft/2020-12/relative-json-pointer.html|Relative JSON Pointers}
  */
 export type RelativeJsonPointer = {
-  indexManipulation: number | null;
+  indexShift: number | null;
 
   jsonPointer: JsonPointer;
 
@@ -53,21 +53,29 @@ export const parseRelativeJsonPointerFromString = (relativeJsonPointerString: st
    * second group -- index manipulation (optional) -- offset from current array element
    * third group -- JSON Pointer
    */
-  const match = relativeJsonPointerString.match(/^(0|[1-9][0-9]*)([+-](?:0|[1-9][0-9]*))?(#|(?:\/.*)*)?$/);
+  const match = relativeJsonPointerString.match(
+    /^(?<levelsUp>0|[1-9][0-9]*)(?<indexManipulation>[+-](?:0|[1-9][0-9]*))?(?<jsonPointerString>#|(?:\/.*)*)?$/,
+  );
 
-  if (match === null || match[1] === undefined) {
+  if (match === null || match.groups === undefined) {
     throw new InvalidRelativePointerSyntax(relativeJsonPointerString);
   }
 
-  const jsonPointer = parseJsonPointerFromString(match[3] === undefined ? '' : match[3]);
+  const { levelsUp, indexManipulation, jsonPointerString } = match.groups;
+
+  if (levelsUp === undefined) {
+    throw new InvalidRelativePointerSyntax(relativeJsonPointerString);
+  }
+
+  const jsonPointer = parseJsonPointerFromString(jsonPointerString === undefined ? '' : jsonPointerString);
 
   if (jsonPointer.uriFragmentIdentifierRepresentation && jsonPointer.referenceTokens.length > 0) {
     throw new UriFragmentIdentifierRepresentationNotSupported(jsonPointer);
   }
 
   return {
-    levelsUp: parseInt(match[1], 10),
-    indexManipulation: match[2] === undefined ? null : parseInt(match[2], 10),
+    levelsUp: parseInt(levelsUp, 10),
+    indexShift: indexManipulation === undefined ? null : parseInt(indexManipulation, 10),
     jsonPointer,
   };
 };
@@ -81,7 +89,7 @@ export const parseRelativeJsonPointerFromString = (relativeJsonPointerString: st
 export const createStringFromRelativeJsonPointer = (relativeJsonPointer: RelativeJsonPointer): string => {
   return (
     relativeJsonPointer.levelsUp.toString() +
-    relativeJsonPointer.indexManipulation?.toString() +
+    relativeJsonPointer.indexShift?.toString() +
     createStringFromJsonPointer(relativeJsonPointer.jsonPointer)
   );
 };

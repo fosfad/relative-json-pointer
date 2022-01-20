@@ -20,10 +20,10 @@ describe('parseJsonPointerFromString function', () => {
       ['2/foo/0', 2, null, '/foo/0'],
       ['0#', 0, null, '#'],
       ['1#', 1, null, '#'],
-    ])('Relative pointer `%s`', (relativeJsonPointer, levelsUp, indexManipulation, jsonPointerString) => {
+    ])('Relative pointer `%s`', (relativeJsonPointer, levelsUp, indexShift, jsonPointerString) => {
       expect(parseRelativeJsonPointerFromString(relativeJsonPointer)).toEqual<RelativeJsonPointer>({
         levelsUp: levelsUp,
-        indexManipulation: indexManipulation,
+        indexShift: indexShift,
         jsonPointer: parseJsonPointerFromString(jsonPointerString),
       });
     });
