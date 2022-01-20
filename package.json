@@ -1,0 +1,47 @@
+{
+  "name": "@fosfad/relative-json-pointer",
+  "description": "",
+  "repository": "github:fosfad/relative-json-pointer",
+  "files": [
+    "/dist/src/"
+  ],
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "author": {
+    "email": "omgmashina@gmail.com",
+    "name": "Vadim Balashov"
+  },
+  "keywords": [
+    "json-pointer",
+    "rfc6901"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fosfad/relative-json-pointer/issues"
+  },
+  "homepage": "https://github.com/fosfad/relative-json-pointer",
+  "engines": {
+    "node": ">=16"
+  },
+  "devDependencies": {
+    "@types/jest": "27.4.0",
+    "@typescript-eslint/eslint-plugin": "5.9.1",
+    "@typescript-eslint/parser": "5.9.1",
+    "eslint": "8.7.0",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "2.25.4",
+    "eslint-plugin-jest": "25.7.0",
+    "eslint-plugin-sort-keys-fix": "1.1.2",
+    "eslint-plugin-tsdoc": "0.2.14",
+    "eslint-plugin-typescript-sort-keys": "2.1.0",
+    "eslint-plugin-unused-imports": "2.0.0",
+    "jest": "27.4.7",
+    "prettier": "2.5.1",
+    "ts-jest": "27.1.3",
+    "ts-node": "10.4.0",
+    "typescript": "4.5.4"
+  },
+  "dependencies": {
+    "@fosfad/json-pointer": "0.1.0"
+  }
+}
