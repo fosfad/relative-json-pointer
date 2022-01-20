@@ -1,7 +1,11 @@
 import type { Json, JsonPointer } from '@fosfad/json-pointer';
 import { getValueAtJsonPointer, parseJsonPointerFromString } from '@fosfad/json-pointer';
 import type { RelativeJsonPointer } from './relativeJsonPointer';
-import { createStringFromRelativeJsonPointer, parseRelativeJsonPointerFromString } from './relativeJsonPointer';
+import {
+  convertIndexManipulationToInt,
+  createStringFromRelativeJsonPointer,
+  parseRelativeJsonPointerFromString,
+} from './relativeJsonPointer';
 
 export class JsonDocumentOutOfBounds extends Error {
   public readonly relativeJsonPointer: RelativeJsonPointer;
@@ -73,7 +77,7 @@ export class ExtractNameOfJsonDocumentRoot extends Error {
   }
 }
 
-function applyLevelsUp(jsonPointer: JsonPointer, relativeJsonPointer: RelativeJsonPointer): JsonPointer {
+const applyLevelsUp = (jsonPointer: JsonPointer, relativeJsonPointer: RelativeJsonPointer): JsonPointer => {
   const remainder = jsonPointer.referenceTokens.length - relativeJsonPointer.levelsUp;
 
   if (remainder < 0) {
@@ -84,10 +88,14 @@ function applyLevelsUp(jsonPointer: JsonPointer, relativeJsonPointer: RelativeJs
     referenceTokens: jsonPointer.referenceTokens.slice(0, remainder),
     uriFragmentIdentifierRepresentation: jsonPointer.uriFragmentIdentifierRepresentation,
   };
-}
+};
 
-function applyArrayShift(json: Json, jsonPointer: JsonPointer, relativeJsonPointer: RelativeJsonPointer): JsonPointer {
-  if (relativeJsonPointer.indexShift === null) {
+const applyArrayShift = (
+  json: Json,
+  jsonPointer: JsonPointer,
+  relativeJsonPointer: RelativeJsonPointer,
+): JsonPointer => {
+  if (relativeJsonPointer.indexManipulation === undefined) {
     return jsonPointer;
   }
 
@@ -111,25 +119,25 @@ function applyArrayShift(json: Json, jsonPointer: JsonPointer, relativeJsonPoint
   }
 
   if (
-    currentIndex + relativeJsonPointer.indexShift < 0 ||
-    currentIndex + relativeJsonPointer.indexShift > array.length - 1
+    currentIndex + convertIndexManipulationToInt(relativeJsonPointer.indexManipulation) < 0 ||
+    currentIndex + convertIndexManipulationToInt(relativeJsonPointer.indexManipulation) > array.length - 1
   ) {
     throw new IndexManipulationOutOfBounds(relativeJsonPointer);
   }
 
   return {
     referenceTokens: jsonPointerToArray.referenceTokens.concat(
-      (currentIndex + relativeJsonPointer.indexShift).toString(10),
+      (currentIndex + convertIndexManipulationToInt(relativeJsonPointer.indexManipulation)).toString(10),
     ),
     uriFragmentIdentifierRepresentation: jsonPointerToArray.uriFragmentIdentifierRepresentation,
   };
-}
+};
 
-function extractNameOrIndex(
+const extractNameOrIndex = (
   json: Json,
   jsonPointer: JsonPointer,
   relativeJsonPointer: RelativeJsonPointer,
-): number | string {
+): number | string => {
   const jsonElementNameOrIndexString = jsonPointer.referenceTokens.slice(-1)[0];
 
   if (jsonElementNameOrIndexString === undefined) {
@@ -148,7 +156,7 @@ function extractNameOrIndex(
   } else {
     return jsonElementNameOrIndexString;
   }
-}
+};
 
 export const getValueAtRelativeJsonPointer = (
   json: Json,

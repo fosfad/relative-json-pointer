@@ -25,13 +25,23 @@ export class UriFragmentIdentifierRepresentationNotSupported extends Error {
   }
 }
 
+export type IndexManipulation = {
+  direction: '-' | '+';
+
+  indexShift: number;
+};
+
+export const convertIndexManipulationToInt = (indexManipulation: IndexManipulation): number => {
+  return parseInt(indexManipulation.direction + indexManipulation.indexShift);
+};
+
 /**
  * Relative JSON Pointer representation as object.
  *
  * @see {@link https://json-schema.org/draft/2020-12/relative-json-pointer.html|Relative JSON Pointers}
  */
 export type RelativeJsonPointer = {
-  indexShift: number | null;
+  indexManipulation: IndexManipulation | undefined;
 
   jsonPointer: JsonPointer;
 
@@ -54,14 +64,14 @@ export const parseRelativeJsonPointerFromString = (relativeJsonPointerString: st
    * third group -- JSON Pointer
    */
   const match = relativeJsonPointerString.match(
-    /^(?<levelsUp>0|[1-9][0-9]*)(?<indexManipulation>[+-](?:0|[1-9][0-9]*))?(?<jsonPointerString>#|(?:\/.*)*)?$/,
+    /^(?<levelsUp>0|[1-9][0-9]*)(?<indexManipulationString>[+-](?:0|[1-9][0-9]*))?(?<jsonPointerString>#|(?:\/.*)*)?$/,
   );
 
   if (match === null || match.groups === undefined) {
     throw new InvalidRelativePointerSyntax(relativeJsonPointerString);
   }
 
-  const { levelsUp, indexManipulation, jsonPointerString } = match.groups;
+  const { levelsUp, indexManipulationString, jsonPointerString } = match.groups;
 
   if (levelsUp === undefined) {
     throw new InvalidRelativePointerSyntax(relativeJsonPointerString);
@@ -73,9 +83,29 @@ export const parseRelativeJsonPointerFromString = (relativeJsonPointerString: st
     throw new UriFragmentIdentifierRepresentationNotSupported(jsonPointer);
   }
 
+  let indexManipulation: IndexManipulation | undefined = undefined;
+  if (indexManipulationString !== undefined) {
+    const indexShift = parseInt(indexManipulationString.substring(1), 10);
+    let direction: '-' | '+';
+    switch (indexManipulationString.substring(0, 1)) {
+      case '+':
+        direction = '+';
+        break;
+      case '-':
+        direction = '-';
+        break;
+      default:
+        throw Error('Logic exception');
+    }
+    indexManipulation = {
+      indexShift,
+      direction,
+    };
+  }
+
   return {
     levelsUp: parseInt(levelsUp, 10),
-    indexShift: indexManipulation === undefined ? null : parseInt(indexManipulation, 10),
+    indexManipulation,
     jsonPointer,
   };
 };
@@ -89,7 +119,8 @@ export const parseRelativeJsonPointerFromString = (relativeJsonPointerString: st
 export const createStringFromRelativeJsonPointer = (relativeJsonPointer: RelativeJsonPointer): string => {
   return (
     relativeJsonPointer.levelsUp.toString() +
-    relativeJsonPointer.indexShift?.toString() +
+    relativeJsonPointer.indexManipulation?.direction +
+    relativeJsonPointer.indexManipulation?.indexShift.toString() +
     createStringFromJsonPointer(relativeJsonPointer.jsonPointer)
   );
 };
