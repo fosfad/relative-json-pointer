@@ -1,5 +1,5 @@
 import type { Json, JsonPointer } from '@fosfad/json-pointer';
-import { getValueAtJsonPointer, isValidJsonPointer, parseJsonPointerFromString } from '@fosfad/json-pointer';
+import { getValueAtJsonPointer, parseJsonPointerFromString } from '@fosfad/json-pointer';
 import type { RelativeJsonPointer } from './relativeJsonPointer';
 import { createStringFromRelativeJsonPointer, parseRelativeJsonPointerFromString } from './relativeJsonPointer';
 

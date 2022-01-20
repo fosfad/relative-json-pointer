@@ -58,7 +58,9 @@ describe('Negative custom test cases', () => {
     expect(() => getValueAtRelativeJsonPointer(json, deepJsonPointer, '4')).toThrow(JsonDocumentOutOfBounds);
   });
   test('IndexManipulationOnJsonDocumentRoot', () => {
-    expect(() => getValueAtRelativeJsonPointer(json, deepJsonPointer, '3-1')).toThrow(IndexManipulationOnJsonDocumentRoot);
+    expect(() => getValueAtRelativeJsonPointer(json, deepJsonPointer, '3-1')).toThrow(
+      IndexManipulationOnJsonDocumentRoot,
+    );
   });
   test('IndexManipulationNotOnArrayValue', () => {
     expect(() => getValueAtRelativeJsonPointer(json, deepJsonPointer, '0-1')).toThrow(IndexManipulationNotOnArrayValue);
