@@ -90,7 +90,7 @@ const applyLevelsUp = (jsonPointer: JsonPointer, relativeJsonPointer: RelativeJs
   };
 };
 
-const applyArrayShift = (
+const applyIndexManipulation = (
   json: Json,
   jsonPointer: JsonPointer,
   relativeJsonPointer: RelativeJsonPointer,
@@ -174,7 +174,7 @@ export const getValueAtRelativeJsonPointer = (
 
   jsonPointerObject = applyLevelsUp(jsonPointerObject, relativeJsonPointerObject);
 
-  jsonPointerObject = applyArrayShift(json, jsonPointerObject, relativeJsonPointerObject);
+  jsonPointerObject = applyIndexManipulation(json, jsonPointerObject, relativeJsonPointerObject);
 
   if (relativeJsonPointerObject.jsonPointer.uriFragmentIdentifierRepresentation) {
     return extractNameOrIndex(json, jsonPointerObject, relativeJsonPointerObject);
