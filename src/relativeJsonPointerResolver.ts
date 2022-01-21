@@ -9,84 +9,76 @@ import {
 import { valueExistsAtJsonPointer } from '@fosfad/json-pointer/dist/src/jsonPointerProcessor';
 
 export class JsonPointerReferencesNonexistentValue extends Error {
-  public readonly jsonPointer: JsonPointer;
-
-  constructor(jsonPointer: JsonPointer) {
-    const jsonPointerString = createStringFromJsonPointer(jsonPointer);
-
-    super(`JSON Pointer ${jsonPointerString} references non-existent value.`);
-
-    this.jsonPointer = jsonPointer;
+  constructor(public readonly jsonPointer: JsonPointer) {
+    super(`JSON Pointer ${createStringFromJsonPointer(jsonPointer)} references non-existent value.`);
 
     Object.setPrototypeOf(this, JsonPointerReferencesNonexistentValue.prototype);
   }
 }
 
-export class JsonDocumentOutOfBounds extends Error {
-  public readonly relativeJsonPointer: RelativeJsonPointer;
+export class RelativeJsonPointerReferencesNonexistentValue extends Error {
+  constructor(message: string) {
+    super(message);
 
-  constructor(relativeJsonPointer: RelativeJsonPointer) {
-    const relativeJsonPointerString = createStringFromRelativeJsonPointer(relativeJsonPointer);
+    Object.setPrototypeOf(this, RelativeJsonPointerReferencesNonexistentValue.prototype);
+  }
+}
 
-    super(`Relative JSON Pointer ${relativeJsonPointerString} points outside JSON document.`);
-
-    this.relativeJsonPointer = relativeJsonPointer;
+export class JsonDocumentOutOfBounds extends RelativeJsonPointerReferencesNonexistentValue {
+  constructor(public readonly relativeJsonPointer: RelativeJsonPointer) {
+    super(
+      `Relative JSON Pointer ${createStringFromRelativeJsonPointer(
+        relativeJsonPointer,
+      )} references JSON document outside.`,
+    );
 
     Object.setPrototypeOf(this, JsonDocumentOutOfBounds.prototype);
   }
 }
 
-export class IndexManipulationOnJsonDocumentRoot extends Error {
-  public readonly relativeJsonPointer: RelativeJsonPointer;
-
-  constructor(relativeJsonPointer: RelativeJsonPointer) {
-    const relativeJsonPointerString = createStringFromRelativeJsonPointer(relativeJsonPointer);
-
-    super(`Relative JSON Pointer ${relativeJsonPointerString} performs index manipulation on JSON document root.`);
-
-    this.relativeJsonPointer = relativeJsonPointer;
+export class IndexManipulationOnJsonDocumentRoot extends RelativeJsonPointerReferencesNonexistentValue {
+  constructor(public readonly relativeJsonPointer: RelativeJsonPointer) {
+    super(
+      `Relative JSON Pointer ${createStringFromRelativeJsonPointer(
+        relativeJsonPointer,
+      )} performs index manipulation on JSON document root.`,
+    );
 
     Object.setPrototypeOf(this, IndexManipulationOnJsonDocumentRoot.prototype);
   }
 }
 
-export class IndexManipulationNotOnArrayValue extends Error {
-  public readonly relativeJsonPointer: RelativeJsonPointer;
-
-  constructor(relativeJsonPointer: RelativeJsonPointer) {
-    const relativeJsonPointerString = createStringFromRelativeJsonPointer(relativeJsonPointer);
-
-    super(`Relative JSON Pointer ${relativeJsonPointerString} performs index manipulation not on array value.`);
-
-    this.relativeJsonPointer = relativeJsonPointer;
+export class IndexManipulationNotOnArrayValue extends RelativeJsonPointerReferencesNonexistentValue {
+  constructor(public readonly relativeJsonPointer: RelativeJsonPointer) {
+    super(
+      `Relative JSON Pointer ${createStringFromRelativeJsonPointer(
+        relativeJsonPointer,
+      )} performs index manipulation not on array.`,
+    );
 
     Object.setPrototypeOf(this, IndexManipulationNotOnArrayValue.prototype);
   }
 }
 
-export class IndexManipulationOutOfBounds extends Error {
-  public readonly relativeJsonPointer: RelativeJsonPointer;
-
-  constructor(relativeJsonPointer: RelativeJsonPointer) {
-    const relativeJsonPointerString = createStringFromRelativeJsonPointer(relativeJsonPointer);
-
-    super(`Relative JSON Pointer ${relativeJsonPointerString} index manipulation points outside array value.`);
-
-    this.relativeJsonPointer = relativeJsonPointer;
+export class IndexManipulationOutOfBounds extends RelativeJsonPointerReferencesNonexistentValue {
+  constructor(public readonly relativeJsonPointer: RelativeJsonPointer) {
+    super(
+      `Relative JSON Pointer ${createStringFromRelativeJsonPointer(
+        relativeJsonPointer,
+      )} index manipulation points outside array.`,
+    );
 
     Object.setPrototypeOf(this, IndexManipulationOutOfBounds.prototype);
   }
 }
 
-export class ExtractNameOfJsonDocumentRoot extends Error {
-  public readonly relativeJsonPointer: RelativeJsonPointer;
-
-  constructor(relativeJsonPointer: RelativeJsonPointer) {
-    const relativeJsonPointerString = createStringFromRelativeJsonPointer(relativeJsonPointer);
-
-    super(`Relative JSON Pointer ${relativeJsonPointerString} extracts name of JSON document root.`);
-
-    this.relativeJsonPointer = relativeJsonPointer;
+export class ExtractNameOfJsonDocumentRoot extends RelativeJsonPointerReferencesNonexistentValue {
+  constructor(public readonly relativeJsonPointer: RelativeJsonPointer) {
+    super(
+      `Relative JSON Pointer ${createStringFromRelativeJsonPointer(
+        relativeJsonPointer,
+      )} extracts name of JSON document root.`,
+    );
 
     Object.setPrototypeOf(this, ExtractNameOfJsonDocumentRoot.prototype);
   }
