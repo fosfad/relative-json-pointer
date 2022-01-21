@@ -1,11 +1,26 @@
 import type { Json, JsonPointer } from '@fosfad/json-pointer';
-import { getValueAtJsonPointer, parseJsonPointerFromString } from '@fosfad/json-pointer';
+import { createStringFromJsonPointer, getValueAtJsonPointer, parseJsonPointerFromString } from '@fosfad/json-pointer';
 import type { RelativeJsonPointer } from './relativeJsonPointer';
 import {
   convertIndexManipulationToInt,
   createStringFromRelativeJsonPointer,
   parseRelativeJsonPointerFromString,
 } from './relativeJsonPointer';
+import { valueExistsAtJsonPointer } from '@fosfad/json-pointer/dist/src/jsonPointerProcessor';
+
+export class JsonPointerReferencesNonexistentValue extends Error {
+  public readonly jsonPointer: JsonPointer;
+
+  constructor(jsonPointer: JsonPointer) {
+    const jsonPointerString = createStringFromJsonPointer(jsonPointer);
+
+    super(`JSON Pointer ${jsonPointerString} references non-existent value.`);
+
+    this.jsonPointer = jsonPointer;
+
+    Object.setPrototypeOf(this, JsonPointerReferencesNonexistentValue.prototype);
+  }
+}
 
 export class JsonDocumentOutOfBounds extends Error {
   public readonly relativeJsonPointer: RelativeJsonPointer;
@@ -170,7 +185,9 @@ export const getValueAtRelativeJsonPointer = (
       ? parseRelativeJsonPointerFromString(relativeJsonPointer)
       : relativeJsonPointer;
 
-  getValueAtJsonPointer(json, jsonPointerObject); // just to verify that JsonPointer references existing value
+  if (!valueExistsAtJsonPointer(json, jsonPointerObject)) {
+    throw new JsonPointerReferencesNonexistentValue(jsonPointerObject);
+  }
 
   jsonPointerObject = applyLevelsUp(jsonPointerObject, relativeJsonPointerObject);
 

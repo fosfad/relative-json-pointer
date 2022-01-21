@@ -42,6 +42,6 @@
     "typescript": "4.5.4"
   },
   "dependencies": {
-    "@fosfad/json-pointer": "0.2.0"
+    "@fosfad/json-pointer": "0.3.0"
   }
 }
